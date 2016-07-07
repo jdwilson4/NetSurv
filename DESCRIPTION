@@ -1,0 +1,19 @@
+Package: NetSurv
+Title: Network Surveillance via the Degree Corrected Stochastic Block Model
+Version: 0.0.0.9000
+Author: James D. Wilson [aut, cre],
+    Nathaniel T. Stevens [aut]
+Maintainer: James D. Wilson <jdwilson4@usfca.edu>
+Description: This package is used to simulate and estimate a dynamic degree
+    corrected stochastic block model (DCSBM), which has a structural change point.
+    The function NetSurv can be used to estimate a change point in a dynamic
+    sequence of graphs using the maximum likelihood estimators of the DCSBM.
+Depends:
+    R (>= 3.2.2)
+License: GPL (>= 2)
+Imports:
+    Matrix,
+    Rlab
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
