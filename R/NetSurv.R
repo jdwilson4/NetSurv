@@ -3,7 +3,7 @@
 #' Moving range surveillance control chart and plots for a desired collection of statistics
 #' @param Statistics: a data frame whose rows represent time and columns represent a desired statistic to be monitored
 #' @param phase1.length: number of networks to use in phase 1 of monitoring
-#' @param plot: a logical specifying whether or not to plot (and save) the control chart for each statistic
+#' @param save: a logical specifying whether or not to plot (and save) the control chart for each statistic
 #' @param directory: the directory where a .pdf version of the plot is stored (if plot == TRUE). Default is the current directory
 #' @param height: height (in inches) of the printed plot
 #' @param width: width (in inches) of the printed plot
@@ -11,6 +11,7 @@
 #' @param ylab: the label on the y axis. Default is "Value"
 #' @param xaxis.old: the old labels for the time variable on the x axis. Default is 1:T
 #' @param xaxis.new: the new labels that you wish to have on the x axis. Default is 1:T. Note that this must have the same length as xaxis.old
+#' @param par.plot: an integer of length 2 that specifies the number of c(rows, columns) to print the control charts
 #' 
 #' @keywords community detection, random graph model, network monitoring, statistical process control
 #' @return a list containing the objects 
@@ -51,10 +52,10 @@
 #' control.chart <- NetSurv(statistics.df, phase1.length = 20, plot = TRUE)
 #' @export 
 
-NetSurv <- function(Statistics, phase1.length, plot = c(FALSE, TRUE), 
+NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE), 
                     directory = getwd(), height = 7, width = 7, 
                     xlab = "Time", ylab = "Value", xaxis.old = c(1:dim(Statistics)[1]),
-                    xaxis.new = c(1:dim(Statistics)[1])){
+                    xaxis.new = c(1:dim(Statistics)[1]), par.plot = c(2, round(Statistics / 2))){
   
   #number of time steps
   T <- dim(Statistics)[1]
@@ -69,6 +70,7 @@ NetSurv <- function(Statistics, phase1.length, plot = c(FALSE, TRUE),
   
   #build Shewhart control chart for each statistic
   #note that we can use any control chart here. More to come on this later
+  if(save == TRUE){
   for(j in 1:p){
     control.df[, j] <- 0
     phase.I.stat <- Statistics[1:phase1.length, j]
@@ -82,7 +84,6 @@ NetSurv <- function(Statistics, phase1.length, plot = c(FALSE, TRUE),
     control.df[indx, j] <- 1
     
     #Plot control chart if desired
-    if(plot == TRUE){
       statistic <- Statistics[, j]
       file <- paste(directory, "/", names.stats[j], ".pdf", sep = "")
       ylim.lower <- min(lower, min(statistic)) - 0.015
@@ -96,6 +97,32 @@ NetSurv <- function(Statistics, phase1.length, plot = c(FALSE, TRUE),
       axis(1, at = xaxis.old, labels = xaxis.new)
       dev.off()
     }
+  }
+  #Draw the control chart here 
+  par(mfrow = par.plot)
+  for(j in 1:p){
+    control.df[, j] <- 0
+    phase.I.stat <- Statistics[1:phase1.length, j]
+    sd.est <- mean(abs(diff(phase.I.stat)))/1.128
+    avg.est <- mean(phase.I.stat)
+    
+    upper <- avg.est + 3*sd.est
+    lower <- avg.est - 3*sd.est
+    result <- c(lower, avg.est, upper)
+    indx <- which(Statistics[, j] > upper | Statistics[, j] < lower)
+    control.df[indx, j] <- 1
+    
+    #Plot control chart if desired
+    statistic <- Statistics[, j]
+    file <- paste(directory, "/", names.stats[j], ".pdf", sep = "")
+    ylim.lower <- min(lower, min(statistic)) - 0.015
+    ylim.upper <- max(upper, max(statistic)) + 0.015
+    plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
+               pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n")
+    points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
+    abline(h = upper, lty = 2, lwd = 2, col = "blue")
+    abline(h = lower, lty = 2, lwd = 2,col = "blue")
+    axis(1, at = xaxis.old, labels = xaxis.new)
   }
   return(Control.Chart = control.df)
 }

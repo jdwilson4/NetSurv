@@ -2,7 +2,7 @@
 #' 
 #' Estimate the maximum likelihood estimators for P and delta at each time point in the list of adjacency matrices
 #' @param Adjacency.list: list of adjacency matrices in the observed dynamic network
-#' @param community.array: an array of length T whose tth entry is a numeric vector of length n specifying community labels at time t
+#' @param community.array: an array or a list of length T whose tth entry is a numeric vector of length n specifying community labels at time t
 #' @param T: number of graphs in the temporal sequence
 #' @param k: number of communities (fixed accross time) Note, this is the pre-conceived idea of how many communities there are.
 #' 
@@ -48,7 +48,12 @@ MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
     delta.hat.global <- numeric(length = T)
     for(t in 1:T){
       Network <- Adjacency.list[[t]]
-      community.labels = as.numeric(as.factor(community.array[, , t]))
+      if(is.list(community.array)){
+        community.labels <- as.numeric(as.factor(community.array[[t]]))
+      }
+      if(is.array(community.array)){
+        community.labels <- as.numeric(as.factor(community.array[, , t]))
+      }
       community.labels[is.na(community.labels)] = 1
       number.comms <- max(community.labels)
       n.comm <- rep(0, number.comms)
@@ -75,9 +80,42 @@ MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
           P.hat[i,j] <- sum(Network[indx.i, indx.j]) / (n.comm[i]*n.comm[j])
         }
       }
-    P.hat.array[, , t] <- P.hat
-    delta.hat.array[, , t] <- delta.hat
+      P.hat.array[, , t] <- P.hat
+      delta.hat.array[, , t] <- delta.hat
     }
+  }
+  
+  if(T == 1){
+    Network <- Adjacency.list
+    community.labels = as.numeric(as.factor(community.array))
+    community.labels[is.na(community.labels)] <- 1
+    number.comms <- max(community.labels)
+    n.comm <- rep(0, number.comms)
+    P.hat <- matrix(0, ncol = number.comms, nrow = number.comms)
+    theta.hat <- rep(0, n) #overall propensity of connection
+    delta.hat <- rep(0, number.comms)
+    for(i in 1:number.comms){
+      indx.i <- which(community.labels == i)
+      n.comm[i] <- length(indx.i)
+      if(length(indx.i) == 1){
+        theta.hat[indx.i] <- 1
+      }
+      if(length(indx.i) > 1){
+        theta.hat[indx.i] <- rowSums(Network[indx.i, ]) / ((1 / n.comm[i])* sum(rowSums(Network[indx.i, ])))
+      }
+      delta.hat[i] <- sd(theta.hat[indx.i])
+    }
+    delta.hat.global <- sd(theta.hat)
+    
+    for(i in 1:number.comms){
+      indx.i <- which(community.labels == i)
+      for(j in 1:number.comms){
+        indx.j <- which(community.labels == j)
+        P.hat[i,j] <- sum(Network[indx.i, indx.j]) / (n.comm[i]*n.comm[j])
+      }
+    }
+    P.hat.array <- P.hat
+    delta.hat.array <- delta.hat
   }
   return(list(P.hat.array = P.hat.array, delta.hat.array = delta.hat.array, 
               delta.hat.global = delta.hat.global))

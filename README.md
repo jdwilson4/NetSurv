@@ -26,12 +26,9 @@ library(Rlab, quietly = TRUE)
 ## Description
 This package contains four primary functions, which are briefly described below. For a function named ```function``` below, type ```?function``` in R to get full documentation.
 
-- ```DCSBM()```: simulate an undirected graph realization from the degree corrected stochastic block random graph model. Edge weights are discrete valued and are generated independently where 
-```tex
-{e_{ij} ~ Poisson(theta_{i}*theta_{j}*P_{c_{i}, c_{j}})
-```
+- ```DCSBM()```: simulate an undirected graph realization from the degree corrected stochastic block random graph model. Edge weights are drawn from a Poisson distribution with specified mean.
 - ```dynamic.DCSBM()```: simulate an ordered sequence of undirected graphs from the degree corrected stochastic block random graph model.
-- ```MLE.DCSBM()```: estimate the maximum likelihood estimators for P and \(\delta\) at each time point in a time-varying collection of networks.
+- ```MLE.DCSBM()```: estimate the maximum likelihood estimators for P and delta at each time point in a time-varying collection of networks.
 - ```NetSurv()```: Shewhart surveillance control chart and plots for a desired collection of statistics
 
 ## Examples
@@ -81,14 +78,14 @@ control.chart <- NetSurv(statistics.df, phase1.length = 20, plot = TRUE)
 print(control.chart)
 ```
 
-- **Political Network Application**
+## Application: Senatorial co-voting Network
 Now, we apply the NetSurv methodology on the dynamic networks that describe the co-voting habits of the U.S. Senators over time. See the above reference for more information on the results and description of the data set. 
 
-In this application, we assume that community labels correspond to political affiliation of the Senators (Republican vs. Democrat)
+In this application, we assume that community labels correspond to political affiliation of the Senators (Republican vs. Democrat). The data is contained in the NetSurv package and can be loaded directly. 
 
 ```
 #Load data
-data(Senate_Rollcall.RData)
+data(voting)
 ##More to come soon...
 ```
 

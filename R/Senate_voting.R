@@ -1,26 +1,31 @@
-#' Arabidopsis QTL data on gravitropism
+#' Senate co-voting network data set.
 #'
-#' Data from a QTL experiment on gravitropism in
-#' Arabidopsis, with data on 162 recombinant inbred lines (Ler x
-#' Cvi). The outcome is the root tip angle (in degrees) at two-minute
-#' increments over eight hours.
+#' Data that contains the co-voting network of U.S. Senators from Congress 40 (1867) to 
+#' Congress 113 (2013). Nodes are Senators from the specified Congress, and edges are placed 
+#' between Senators who voted concurrently on 75% of the bills for which they voted.
 #'
 #' @docType data
 #'
-#' @usage data(grav)
+#' @usage data(voting)
 #'
-#' @format An object of class \code{"cross"}; see \code{\link[qtl]{read.cross}}.
+#' @format This data set contains three components
+#' 
+#' \itemize{
+#'    \item US.data: a dataframe describing the Senate majority, and the majority percentage.
+#'    \item political.affiliation: a list of length 74 describing the political affiliation of each Senator for Congresses 40 - 113.
+#'    \item voting.network: a list of length 74 where the tth entry is the adjacency matrix representing the co-voting network for Congress 39 + t.
+#' }
 #'
 #' @keywords datasets
 #'
-#' @references Moore et al. (2013) Genetics 195:1077-1086
-#' (\href{http://www.ncbi.nlm.nih.gov/pubmed/23979570}{PubMed})
-#'
-#' @source \href{http://qtlarchive.org/db/q?pg=projdetails&proj=moore_2013b}{QTL Archive}
+#'@references
+#'\itemize{
+#'     \item Wilson, James D., Stevens, Nathaniel T., and Woodall, William H. (2016). “Modeling and estimating change in temporal networks via a dynamic degree corrected stochastic block model.” 
+#'     arXiv Preprint: http://arxiv.org/abs/1605.04049
+#' } 
+#' @author James D. Wilson
 #'
 #' @examples
-#' data(grav)
-#' times <- attr(grav, "time")
-#' phe <- grav$pheno
-#' \donttest{iplotCurves(phe, times)}
-"grav"
+#' data(voting)
+#' image(Matrix(voting.network[[1]])) #look at co-voting network for Congress 40
+"voting"

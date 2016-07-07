@@ -3,8 +3,8 @@
 #' Simulate an ordered sequence of undirected graphs from the degree corrected stochastic block random graph model. Edge weights are discrete valued and are generated independently where e_ij ~ Poisson(theta_i*theta_j*P_{c_i, c_j})
 #' @param n: number of nodes in the graph
 #' @param T: number of graphs in the temporal sequence
-#' @param P.array: an array of length T whose tth entry is the matrix of probabilities for network t
-#' @param community.array: an array of length T whose tth entry is a numeric vector of length n specifying community labels at time t
+#' @param P.array: an array or list of length T whose tth entry is the matrix of probabilities for network t
+#' @param community.array: an array or a list of length T whose tth entry is a numeric vector of length n specifying community labels at time t
 #' @param delta.array: an array of length T whose tth entry is a numeric vector of length k whose values must be between 0 and 1. 
 #' @param edge.list: a logical that specifies whether or not the adjacency matrix should be returned as an edge list.
 #' 
@@ -44,8 +44,26 @@ dynamic.DCSBM = function(n, T, P.array, community.array, delta.array,
   Adjacency.list <- list()
   Theta.list <- list()
   for(t in 1:T){
-    temp <- DCSBM(n = n, P = P.array[, , t], community.labels = community.array[, , t], delta = delta.array[, , t],
-                  edge.list = edge.list)
+    if(is.list(community.array) & is.array(P.array)){
+      temp <- DCSBM(n = n, P = P.array[, , t], community.labels = community.array[[t]], delta = delta.array[, , t],
+                    edge.list = edge.list)
+    }
+    
+    if(is.list(community.array) & is.list(P.array)){
+      temp <- DCSBM(n = n, P = P.array[[t]], community.labels = community.array[[t]], delta = delta.array[, , t],
+                    edge.list = edge.list)
+    }
+    
+    if(is.array(community.array) & is.list(P.array)){
+      temp <- DCSBM(n = n, P = P.array[[t]], community.labels = community.array[, , t], delta = delta.array[, , t],
+                    edge.list = edge.list)
+    }
+    
+    if(is.array(community.array) & is.array(P.array)){
+      temp <- DCSBM(n = n, P = P.array[, , t], community.labels = community.array[, , t], delta = delta.array[, , t],
+                    edge.list = edge.list)
+    }
+    
     Adjacency.list[[t]] <- temp$Adjacency
     Theta.list[[t]] <- temp$Thetas
   }
