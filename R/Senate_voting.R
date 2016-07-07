@@ -1,4 +1,4 @@
-#' voting
+#' data set: voting
 #'
 #' Data set that contains the co-voting network of U.S. Senators from Congress 40 (1867) to 
 #' Congress 113 (2013). Nodes are Senators from the specified Congress, and edges are placed 
@@ -10,13 +10,15 @@
 #'
 #' @format This data set contains three components
 #' 
-#' \itemize{
-#'    \item US.data: a dataframe describing the Senate majority, and the majority percentage.
-#'    \item political.affiliation: a list of length 74 describing the political affiliation of each Senator for Congresses 40 - 113.
-#'    \item voting.network: a list of length 74 where the tth entry is the adjacency matrix representing the co-voting network for Congress 39 + t.
+#' \describe{
+#'    \item{US.data} a dataframe describing the Senate majority, and the majority percentage.
+#'    \item{political.affiliation}: a list of length 74 describing the political affiliation of each Senator for Congresses 40 - 113.
+#'    \item{voting.network}: a list of length 74 where the tth entry is the adjacency matrix representing the co-voting network for Congress 39 + t.
 #' }
 #'
 #' @keywords datasets
+#'
+#'@source \url{http://voteview.com}
 #'
 #'@references
 #'\itemize{
@@ -29,3 +31,4 @@
 #' data(voting)
 #' image(Matrix(voting.network[[1]])) #look at co-voting network for Congress 40
 #' @export
+"voting"
