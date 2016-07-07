@@ -99,7 +99,7 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
     }
   }
   #Draw the control chart here 
-  par(mfrow = c(2, round(Statistics / 2)))
+  par(mfrow = c(2, round(length(Statistics) / 2)))
   for(j in 1:p){
     control.df[, j] <- 0
     phase.I.stat <- Statistics[1:phase1.length, j]

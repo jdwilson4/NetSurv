@@ -86,7 +86,26 @@ In this application, we assume that community labels correspond to political aff
 ```
 #Load data
 data(voting)
-##More to come soon...
+?voting
+
+#Estimate MLEs using DCSBM. 
+
+MLEs.application <- MLE.DCSBM(voting.network, community.array = political.affiliation, 
+                              T = length(voting.network))
+                              
+statistics.application <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
+                                    Phat_12 = MLEs.example$P.hat.array[1, 2, ],
+                                    Phat_22 = MLEs.example$P.hat.array[2, 2, ],
+                                    delta_hat = MLEs.example$delta.hat.global)
+
+names(statistics.application) = c("Democrat-Democrat", "Republican-Democrat", 
+                                  "Republican-Republican",
+                                  expression(paste("SD(", hat(theta),")", sep = "")))
+                                  
+                                  
+control.chart <- NetSurv(statistics.application, phase1.length = 50, save.plot = FALSE)
+
+print(control.chart)
 ```
 
 ## Contributors
@@ -94,4 +113,4 @@ data(voting)
 
 - **Nathaniel T. Stevens**, Assistant Professor of Statistics, University of San Francisco. Contributor. 
 
-Please send any comments or questions to the developer James D. Wilson at jdwilson4@usfca.edu. 
+Please send any comments, bugs, or questions to the developer James D. Wilson at jdwilson4@usfca.edu. 

@@ -1,4 +1,4 @@
-#' Senate co-voting network data set.
+#' voting
 #'
 #' Data that contains the co-voting network of U.S. Senators from Congress 40 (1867) to 
 #' Congress 113 (2013). Nodes are Senators from the specified Congress, and edges are placed 
