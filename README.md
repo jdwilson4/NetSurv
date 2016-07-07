@@ -73,6 +73,7 @@ MLEs.example <- MLE.DCSBM(dynamic.net$Adjacency.list, community.array = communit
 #Store the statistics in a data frame
 statistics.df <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
                            Phat_12 = MLEs.example$P.hat.array[1, 2, ],
+                           Phat_22 = MLEs.example$P.hat.array[2, 2, ],
                            delta_hat = MLEs.example$delta.hat.global)
 control.chart <- NetSurv(statistics.df, phase1.length = 20, save.plot = FALSE)
 print(control.chart)
@@ -107,7 +108,7 @@ control.chart <- NetSurv(statistics.application, phase1.length = 50, xaxis.old =
 ```
 
 ## Contributors
-- **James D. Wilson**, Assistant Professor of Statistics, University of San Francisco. Developor, contributor, and maintainer. 
+- **James D. Wilson**, Assistant Professor of Statistics, University of San Francisco. Developer, contributor, and maintainer. 
 
 - **Nathaniel T. Stevens**, Assistant Professor of Statistics, University of San Francisco. Contributor. 
 
