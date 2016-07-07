@@ -67,7 +67,7 @@ MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
           theta.hat[indx.i] <- 1
         }
         if(length(indx.i) > 1){
-          theta.hat[indx.i] <- rowSums(Network[indx.i, ]) / ((1 / n.comm[i])* sum(rowSums(Network[indx.i, ])))
+          theta.hat[indx.i] <- rowSums((Network[indx.i, ])) / ((1 / n.comm[i])* sum(rowSums((Network[indx.i, ]))))
         }
         delta.hat[i] <- sd(theta.hat[indx.i])
       }
@@ -101,7 +101,7 @@ MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
         theta.hat[indx.i] <- 1
       }
       if(length(indx.i) > 1){
-        theta.hat[indx.i] <- rowSums(Network[indx.i, ]) / ((1 / n.comm[i])* sum(rowSums(Network[indx.i, ])))
+        theta.hat[indx.i] <- rowSums((Network[indx.i, ])) / ((1 / n.comm[i])* sum(rowSums((Network[indx.i, ]))))
       }
       delta.hat[i] <- sd(theta.hat[indx.i])
     }

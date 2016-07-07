@@ -52,10 +52,10 @@
 #' control.chart <- NetSurv(statistics.df, phase1.length = 20, save.plot = TRUE)
 #' @export 
 
-NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE), 
+NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE), 
                     directory = getwd(), height = 7, width = 7, 
                     xlab = "Time", ylab = "Value", xaxis.old = c(1:dim(Statistics)[1]),
-                    xaxis.new = c(1:dim(Statistics)[1]), par.plot = c(2, round(Statistics / 2))){
+                    xaxis.new = c(1:dim(Statistics)[1])){
   
   #number of time steps
   T <- dim(Statistics)[1]
@@ -89,7 +89,7 @@ NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE),
       ylim.lower <- min(lower, min(statistic)) - 0.015
       ylim.upper <- max(upper, max(statistic)) + 0.015
       pdf(file = file, height = height, width = width)
-      print(plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
+      print(plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = paste(names.stats[j]), type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
            pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n"))
       points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
       abline(h = upper, lty = 2, lwd = 2, col = "blue")
@@ -99,7 +99,7 @@ NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE),
     }
   }
   #Draw the control chart here 
-  par(mfrow = par.plot)
+  par(mfrow = c(2, round(Statistics / 2)))
   for(j in 1:p){
     control.df[, j] <- 0
     phase.I.stat <- Statistics[1:phase1.length, j]
