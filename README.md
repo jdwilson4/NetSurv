@@ -51,7 +51,7 @@ n <- 100
 P.old <- cbind(c(0.10, 0.01), c(0.02, 0.075))
 P.new <- cbind(c(0.20, 0.025), c(0.02, 0.075))
 P.array <- array(c(replicate(25, P.old), replicate(25, P.new)), dim = c(2, 2, 50))
-community.array <- array(rep(c(rep(1, 50), rep(2, 50)), 50), dim = c(1, 100, 50))
+community.array <- array(rep(c(rep(1, 50), rep(2, 50)), 50), dim = c(100, 1, 50))
 delta.array <- array(rep(rep(0.2, 2), 50), dim = c(1, 2, 50))
  
 dynamic.net <- dynamic.DCSBM(n = 100, T = 50, P.array = P.array,
@@ -83,29 +83,27 @@ Now, we apply the NetSurv methodology on the dynamic networks that describe the 
 
 In this application, we assume that community labels correspond to political affiliation of the Senators (Republican vs. Democrat). The data is contained in the NetSurv package and can be loaded directly. 
 
+Our surveillance technique reveals periods of (i) political cohesion (Congress 90 - 95), which is associated with the "Rockefeller Republican" era where Republicans swayed left following the ideals of Nelson Rockefeller, and (ii) political polarization (Congress 104 and beyond). 
+
 ```
 #Load data
 data(voting)
-?voting
 
 #Estimate MLEs using DCSBM. 
 
 MLEs.application <- MLE.DCSBM(voting.network, community.array = political.affiliation, 
-                              T = length(voting.network))
-                              
-statistics.application <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
-                                    Phat_12 = MLEs.example$P.hat.array[1, 2, ],
-                                    Phat_22 = MLEs.example$P.hat.array[2, 2, ],
-                                    delta_hat = MLEs.example$delta.hat.global)
+                              T = length(voting.network), k = 2)
+statistics.application <- data.frame(Phat_11 = MLEs.application$P.hat.array[1, 1, ], 
+                                    Phat_12 = MLEs.application$P.hat.array[1, 2, ],
+                                    Phat_22 = MLEs.application$P.hat.array[2, 2, ],
+                                    delta_hat = MLEs.application$delta.hat.global)
 
 names(statistics.application) = c("Democrat-Democrat", "Republican-Democrat", 
-                                  "Republican-Republican",
-                                  expression(paste("SD(", hat(theta),")", sep = "")))
+                                  "Republican-Republican", "delta.hat")
                                   
-                                  
-control.chart <- NetSurv(statistics.application, phase1.length = 50, save.plot = FALSE)
+control.chart <- NetSurv(statistics.application, phase1.length = 50, xaxis.old = seq(1, 74, 5), 
+                         xaxis.new = seq(40, 113, 5), xlab = "Congress", save.plot = FALSE)
 
-print(control.chart)
 ```
 
 ## Contributors
