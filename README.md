@@ -87,6 +87,7 @@ In this application, we assume that community labels correspond to political aff
 ```
 #Load data
 data(Senate_Rollcall.RData)
+##More to come soon...
 ```
 
 ## Contributors
