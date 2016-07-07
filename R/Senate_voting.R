@@ -1,6 +1,6 @@
 #' voting
 #'
-#' Data that contains the co-voting network of U.S. Senators from Congress 40 (1867) to 
+#' Data set that contains the co-voting network of U.S. Senators from Congress 40 (1867) to 
 #' Congress 113 (2013). Nodes are Senators from the specified Congress, and edges are placed 
 #' between Senators who voted concurrently on 75% of the bills for which they voted.
 #'
@@ -28,4 +28,4 @@
 #' @examples
 #' data(voting)
 #' image(Matrix(voting.network[[1]])) #look at co-voting network for Congress 40
-"voting"
+#' @export
