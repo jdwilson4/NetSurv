@@ -26,16 +26,16 @@ library(Rlab, quietly = TRUE)
 ## Description
 This package contains four primary functions, which are briefly described below. For a function named ```function``` below, type ```?function``` in R to get full documentation.
 
-- ```DCSBM()```: simulate an undirected graph realization from the degree corrected stochastic block random graph model. Edge weights are discrete valued and are generated independently where e_{ij} ~ Poisson(theta_{i}*theta_{j}*P_{c_{i}, c_{j}})
+- ```DCSBM()```: simulate an undirected graph realization from the degree corrected stochastic block random graph model. Edge weights are discrete valued and are generated independently where 
+$$e_{ij} ~ Poisson(theta_{i}*theta_{j}*P_{c_{i}, c_{j}})$$
 - ```dynamic.DCSBM()```: simulate an ordered sequence of undirected graphs from the degree corrected stochastic block random graph model.
-- ```MLE.DCSBM()```: estimate the maximum likelihood estimators for P and $\delta$ at each time point in a time-varying collection of networks.
+- ```MLE.DCSBM()```: estimate the maximum likelihood estimators for P and \[\delta\] at each time point in a time-varying collection of networks.
 - ```NetSurv()```: Shewhart surveillance control chart and plots for a desired collection of statistics
 
 ## Examples
 
+- **Example 1: simulate a single realization of a DCSBM at one time point**
 ```
-#Example 1: simulate a single realization of a DCSBM at one time point
-
 ?DCSBM
 net <- DCSBM(n = 500, k = 2, P = cbind(c(0.10, 0.01), c(0.02, 0.075)),
              sizes = c(200, 300), random.community.assignment = FALSE,
@@ -43,9 +43,9 @@ net <- DCSBM(n = 500, k = 2, P = cbind(c(0.10, 0.01), c(0.02, 0.075)),
 
 image(Matrix(net$Adjacency))
 
-#Example 2: simulate a dynamic DCSBM with 50 time steps and a change at time 25
-#The change is a local change in connection propensity in community 1
-
+```
+- **Example 2: simulate a dynamic DCSBM with 50 time steps and a change at time 25, where the change is a local change in connection propensity in community 1**
+```
 ?dynamic.DCSBM
 
 n <- 100
@@ -62,14 +62,15 @@ dynamic.net <- dynamic.DCSBM(n = 100, T = 50, P.array = P.array,
 #View instances of the network before and after the change
 image(Matrix(dynamic.net$Adjacency.list[[1]]))
 image(Matrix(dynamic.net$Adjacency.list[[30]]))
+```
 
-
-#Example 3: Estimating MLEs of a dynamic DCSBM
+- **Example 3: Estimating MLEs of a dynamic DCSBM**
+```
 MLEs.example <- MLE.DCSBM(dynamic.net$Adjacency.list, community.array = community.array,
                           T = 50, k = 2)
-                          
-#Example 4: Generate control charts for maximum likelihood estimators
-
+```                          
+- **Example 4: Generate control charts for maximum likelihood estimators**
+```
 #Store the statistics in a data frame
 statistics.df <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
                            Phat_12 = MLEs.example$P.hat.array[1, 2, ],
@@ -78,7 +79,7 @@ control.chart <- NetSurv(statistics.df, phase1.length = 20, plot = TRUE)
 print(control.chart)
 ```
 
-## Political Network Application
+- **Political Network Application**
 Now, we apply the NetSurv methodology on the dynamic networks that describe the co-voting habits of the U.S. Senators over time. See the above reference for more information on the results and description of the data set. 
 
 In this application, we assume that community labels correspond to political affiliation of the Senators (Republican vs. Democrat)
@@ -88,8 +89,8 @@ In this application, we assume that community labels correspond to political aff
 ```
 
 ## Contributors
-- James D. Wilson, Assistant Professor of Statistics, University of San Francisco. Developor, contributor, and maintainer. 
+- **James D. Wilson**, Assistant Professor of Statistics, University of San Francisco. Developor, contributor, and maintainer. 
 
-- Nathaniel T. Stevens, Assistant Professor of Statistics, University of San Francisco. Contributor. 
+- **Nathaniel T. Stevens**, Assistant Professor of Statistics, University of San Francisco. Contributor. 
 
 Please send any comments or questions to the developer James D. Wilson at jdwilson4@usfca.edu. 
