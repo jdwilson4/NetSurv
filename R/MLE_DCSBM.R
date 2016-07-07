@@ -47,7 +47,7 @@ MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
     delta.hat.array <- array(0, dim = c(1, k, T))
     delta.hat.global <- numeric(length = T)
     for(t in 1:T){
-      Network <- Adjacency.list[[t]]
+      Network <- as.matrix(Adjacency.list[[t]])
       if(is.list(community.array)){
         community.labels <- as.numeric(as.factor(community.array[[t]]))
       }
