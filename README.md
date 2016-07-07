@@ -85,7 +85,8 @@ Now, we apply the NetSurv methodology on the dynamic networks that describe the 
 In this application, we assume that community labels correspond to political affiliation of the Senators (Republican vs. Democrat)
 
 ```
-
+#Load data
+data(Senate_Rollcall.RData)
 ```
 
 ## Contributors

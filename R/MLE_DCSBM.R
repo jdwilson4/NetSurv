@@ -40,7 +40,7 @@
 #'                            T = 50, k = 2)
 #' @export 
 
-MLE.DCSBM <- function(Adjacency.list, community.array, T, k){
+MLE.DCSBM <- function(Adjacency.list, community.array, T, k = 2){
 
   if(T > 1){
     P.hat.array <- array(0, dim = c(k, k, T))
