@@ -27,7 +27,9 @@ library(Rlab, quietly = TRUE)
 This package contains four primary functions, which are briefly described below. For a function named ```function``` below, type ```?function``` in R to get full documentation.
 
 - ```DCSBM()```: simulate an undirected graph realization from the degree corrected stochastic block random graph model. Edge weights are discrete valued and are generated independently where 
-\[{e_{ij} ~ Poisson(theta_{i}*theta_{j}*P_{c_{i}, c_{j}})\]
+```tex
+{e_{ij} ~ Poisson(theta_{i}*theta_{j}*P_{c_{i}, c_{j}})
+```
 - ```dynamic.DCSBM()```: simulate an ordered sequence of undirected graphs from the degree corrected stochastic block random graph model.
 - ```MLE.DCSBM()```: estimate the maximum likelihood estimators for P and \(\delta\) at each time point in a time-varying collection of networks.
 - ```NetSurv()```: Shewhart surveillance control chart and plots for a desired collection of statistics
