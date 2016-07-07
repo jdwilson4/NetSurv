@@ -3,7 +3,7 @@
 #' Moving range surveillance control chart and plots for a desired collection of statistics
 #' @param Statistics: a data frame whose rows represent time and columns represent a desired statistic to be monitored
 #' @param phase1.length: number of networks to use in phase 1 of monitoring
-#' @param save: a logical specifying whether or not to plot (and save) the control chart for each statistic
+#' @param save.plot: a logical specifying whether or not to plot (and save) the control chart for each statistic
 #' @param directory: the directory where a .pdf version of the plot is stored (if plot == TRUE). Default is the current directory
 #' @param height: height (in inches) of the printed plot
 #' @param width: width (in inches) of the printed plot
@@ -49,7 +49,7 @@
 #' statistics.df <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
 #'                             Phat_12 = MLEs.example$P.hat.array[1, 2, ],
 #'                             delta_hat = MLEs.example$delta.hat.global)
-#' control.chart <- NetSurv(statistics.df, phase1.length = 20, plot = TRUE)
+#' control.chart <- NetSurv(statistics.df, phase1.length = 20, save.plot = TRUE)
 #' @export 
 
 NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE), 
@@ -63,14 +63,14 @@ NetSurv <- function(Statistics, phase1.length, save = c(FALSE, TRUE),
   p <- dim(Statistics)[2]
   names.stats <- names(Statistics)
   x <- 1:T
-  plot <- plot[1]
+  save.plot <- save.plot[1]
   if(phase1.length > T){stop("Phase I must be shorter than the entire time series")}
   
   control.df <- Statistics
   
   #build Shewhart control chart for each statistic
   #note that we can use any control chart here. More to come on this later
-  if(save == TRUE){
+  if(save.plot == TRUE){
   for(j in 1:p){
     control.df[, j] <- 0
     phase.I.stat <- Statistics[1:phase1.length, j]

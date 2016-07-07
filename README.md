@@ -74,7 +74,7 @@ MLEs.example <- MLE.DCSBM(dynamic.net$Adjacency.list, community.array = communit
 statistics.df <- data.frame(Phat_11 = MLEs.example$P.hat.array[1, 1, ], 
                            Phat_12 = MLEs.example$P.hat.array[1, 2, ],
                            delta_hat = MLEs.example$delta.hat.global)
-control.chart <- NetSurv(statistics.df, phase1.length = 20, plot = TRUE)
+control.chart <- NetSurv(statistics.df, phase1.length = 20, save.plot = FALSE)
 print(control.chart)
 ```
 
