@@ -51,15 +51,32 @@ DCSBM = function(n, k = 2, P, sizes = c(round(n / 2), n - round(n / 2)), random.
     }
   }
   
-  #If community labels are not provided, generate a membership vector
-  #Generate Membership vector
+  
   if(is.null(community.labels)){
+    Y <- matrix(rep(0, n*k), ncol = k)
+    index <- list()
+    possible <- 1:n
     Membership <- rep(1, n)
-    if(k > 1){
-      for(i in 2:k){
-        z <- cumsum(sizes)
-        Membership[(z[i - 1] + 1):z[i]] <- i
+    random.community.assignment <- random.community.assignment[1]
+    #assign vertex labels randomly if random.assignment == TRUE
+    if(random.community.assignment == TRUE){
+      for(i in 1:k){
+        index[[i]] <- sample(possible, sizes[i])
+        Membership[index[[i]]] = i
+        possible <- setdiff(possible, index[[i]])
       }
+    }
+    
+    #assign vertex labels in order if random.assignment == FALSE
+    if(random.community.assignment == FALSE){
+      for(i in 1:k){
+        index[[i]] <- possible[1:sizes[i]]
+        Membership[index[[i]]] = i
+        possible <- setdiff(possible, index[[i]])
+      }
+    }
+    for(i in 1:k){
+      Y[index[[i]], i] = 1
     }
   }
   
@@ -80,31 +97,6 @@ DCSBM = function(n, k = 2, P, sizes = c(round(n / 2), n - round(n / 2)), random.
     }
   }
   
-
-  
-  if(is.null(community.labels)){
-    Y <- matrix(rep(0, n*k), ncol = k)
-    index <- list()
-    possible <- 1:n
-    random.community.assignment <- random.community.assignment[1]
-    #assign vertex labels randomly if random.assignment == TRUE
-    if(random.community.assignment == TRUE){
-      for(i in 1:k){
-        index[[i]] <- sample(possible, sizes[i])
-        possible <- setdiff(possible, index[[i]])
-      }
-    }
-    #assign vertex labels in order if random.assignment == FALSE
-    if(random.community.assignment == FALSE){
-      for(i in 1:k){
-        index[[i]] <- possible[1:sizes[i]]
-        possible <- setdiff(possible, index[[i]])
-      }
-    }
-    for(i in 1:k){
-      Y[index[[i]], i] = 1
-    }
-  }
 
   #Generate expected value of the adjacency matrix
   expected.A <- Y%*%P%*%t(Y)
