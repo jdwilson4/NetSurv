@@ -12,7 +12,7 @@
 #' @param xaxis.old: the old labels for the time variable on the x axis. Default is 1:T
 #' @param xaxis.new: the new labels that you wish to have on the x axis. Default is 1:T. Note that this must have the same length as xaxis.old
 #' @param par.plot: an integer of length 2 that specifies the number of c(rows, columns) to print the control charts
-#' 
+#' @param points.of.interest: a vector of time points at which it is believed a change point may occur. There will be lines drawn here in the plot.
 #' @keywords community detection, random graph model, network monitoring, statistical process control
 #' @return a list containing the objects 
 #' \itemize{
@@ -55,7 +55,7 @@
 NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE), 
                     directory = getwd(), height = 7, width = 7, 
                     xlab = "Time", ylab = "Value", xaxis.old = c(1:dim(Statistics)[1]),
-                    xaxis.new = c(1:dim(Statistics)[1])){
+                    xaxis.new = c(1:dim(Statistics)[1]), points.of.interest = NULL){
   
   #number of time steps
   T <- dim(Statistics)[1]
@@ -95,6 +95,11 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
       abline(h = upper, lty = 2, lwd = 2, col = "blue")
       abline(h = lower, lty = 2, lwd = 2,col = "blue")
       axis(1, at = xaxis.old, labels = xaxis.new)
+      if(!is.null(points.of.interest)){
+        for(j in 1:length(points.of.interest)){
+          abline(points.of.interest[j], lwd = 3)
+        }
+      }
       dev.off()
     }
   }
