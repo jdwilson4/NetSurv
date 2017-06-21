@@ -96,8 +96,8 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
       abline(h = lower, lty = 2, lwd = 2,col = "blue")
       axis(1, at = xaxis.old, labels = xaxis.new)
       if(!is.null(points.of.interest)){
-        for(j in 1:length(points.of.interest)){
-          abline(points.of.interest[j], lwd = 3)
+        for(k in 1:length(points.of.interest)){
+          abline(points.of.interest[k], lwd = 3)
         }
       }
       dev.off()
@@ -128,6 +128,11 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
     abline(h = upper, lty = 2, lwd = 2, col = "blue")
     abline(h = lower, lty = 2, lwd = 2,col = "blue")
     axis(1, at = xaxis.old, labels = xaxis.new)
+    if(!is.null(points.of.interest)){
+      for(k in 1:length(points.of.interest)){
+        abline(points.of.interest[k], lwd = 3)
+      }
+    }
   }
   return(Control.Chart = control.df)
 }
