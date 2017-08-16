@@ -125,8 +125,8 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
     plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
                pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n")
     points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
-    abline(h = upper, lty = 2, lwd = 2, col = "blue")
-    abline(h = lower, lty = 2, lwd = 2,col = "blue")
+    abline(h = upper, lty = 2, lwd = 2, col = "red")
+    abline(h = lower, lty = 2, lwd = 2,col = "red")
     axis(1, at = xaxis.old, labels = xaxis.new)
     if(!is.null(points.of.interest)){
       for(k in 1:length(points.of.interest)){
