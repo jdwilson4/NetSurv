@@ -4,6 +4,8 @@
 #' @param Statistics: a data frame whose rows represent time and columns represent a desired statistic to be monitored
 #' @param phase1.length: number of networks to use in phase 1 of monitoring
 #' @param save.plot: a logical specifying whether or not to plot (and save) the control chart for each statistic
+#' @param control.chart: which control chart to apply for surveillance. Choices include "Shewhart" or "EWMA". Default is "Shewhart"
+#' @param lambda: smoothing constant for the EWMA control chart. Default is 0.2
 #' @param directory: the directory where a .pdf version of the plot is stored (if plot == TRUE). Default is the current directory
 #' @param height: height (in inches) of the printed plot
 #' @param width: width (in inches) of the printed plot
@@ -52,11 +54,15 @@
 #' control.chart <- NetSurv(statistics.df, phase1.length = 20, save.plot = TRUE)
 #' @export 
 
-NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE), 
+NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
+                    control.chart = c("Shewhart", "EWMA"),
+                    lambda = 0.2,
                     directory = getwd(), height = 7, width = 7, 
                     xlab = "Time", ylab = "Value", xaxis.old = c(1:dim(Statistics)[1]),
                     xaxis.new = c(1:dim(Statistics)[1]), points.of.interest = NULL){
   
+  #Control Chart
+  control.chart <- control.chart[1] #default is Shewhart
   #number of time steps
   T <- dim(Statistics)[1]
   #number of statistics analyzed
@@ -65,6 +71,7 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
   x <- 1:T
   save.plot <- save.plot[1]
   if(phase1.length > T){stop("Phase I must be shorter than the entire time series")}
+  
   
   control.df <- Statistics
   
@@ -103,37 +110,83 @@ NetSurv <- function(Statistics, phase1.length, save.plot = c(FALSE, TRUE),
       dev.off()
     }
   }
-  #Draw the control chart here 
-  par(mfrow = c(2, round(length(Statistics) / 2)))
-  for(j in 1:p){
-    control.df[, j] <- 0
-    phase.I.stat <- Statistics[1:phase1.length, j]
-    sd.est <- mean(abs(diff(phase.I.stat)))/1.128
-    avg.est <- mean(phase.I.stat)
-    
-    upper <- avg.est + 3*sd.est
-    lower <- avg.est - 3*sd.est
-    result <- c(lower, avg.est, upper)
-    indx <- which(Statistics[, j] > upper | Statistics[, j] < lower)
-    control.df[indx, j] <- 1
-    
-    #Plot control chart if desired
-    statistic <- Statistics[, j]
-    file <- paste(directory, "/", names.stats[j], ".pdf", sep = "")
-    ylim.lower <- min(lower, min(statistic)) - 0.015
-    ylim.upper <- max(upper, max(statistic)) + 0.015
-    plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
-               pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n")
-    points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
-    abline(h = upper, lty = 2, lwd = 2, col = "red")
-    abline(h = lower, lty = 2, lwd = 2,col = "red")
-    axis(1, at = xaxis.old, labels = xaxis.new)
-    if(!is.null(points.of.interest)){
-      for(k in 1:length(points.of.interest)){
-        abline(v = points.of.interest[k], lwd = 2, lty = 2, col = "green")
+  #Draw the control chart here
+  if(control.chart == "Shewhart"){
+    par(mfrow = c(2, round(length(Statistics) / 2)))
+    for(j in 1:p){
+      control.df[, j] <- 0
+      phase.I.stat <- Statistics[1:phase1.length, j]
+      sd.est <- mean(abs(diff(phase.I.stat)))/1.128
+      avg.est <- mean(phase.I.stat)
+      
+      upper <- avg.est + 3*sd.est
+      lower <- avg.est - 3*sd.est
+      result <- c(lower, avg.est, upper)
+      indx <- which(Statistics[, j] > upper | Statistics[, j] < lower)
+      control.df[indx, j] <- 1
+      
+      #Plot control chart if desired
+      statistic <- Statistics[, j]
+      file <- paste(directory, "/", names.stats[j], ".pdf", sep = "")
+      ylim.lower <- min(lower, min(statistic)) - 0.015
+      ylim.upper <- max(upper, max(statistic)) + 0.015
+      plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
+           pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n")
+      points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
+      abline(h = upper, lty = 2, lwd = 2, col = "red")
+      abline(h = lower, lty = 2, lwd = 2,col = "red")
+      axis(1, at = xaxis.old, labels = xaxis.new)
+      if(!is.null(points.of.interest)){
+        for(k in 1:length(points.of.interest)){
+          abline(v = points.of.interest[k], lwd = 2, lty = 2, col = "green")
+        }
       }
     }
   }
+  
+  ##EWMA chart##
+  if(control.chart == "EWMA"){
+    par(mfrow = c(2, round(length(Statistics) / 2)))
+    for(j in 1:p){
+      control.df[, j] <- 0
+      phase.I.stat <- Statistics[1:phase1.length, j]
+      sd.est <- mean(abs(diff(phase.I.stat)))/1.128
+      avg.est <- mean(phase.I.stat)
+      
+      upper <- avg.est + 3*sd.est*sqrt(lambda / (2 - lambda)) #asymptotic control limits
+      lower <- avg.est - 3*sd.est*sqrt(lambda / (2 - lambda)) 
+      result <- c(lower, avg.est, upper)
+      
+      #update to the statistics
+      z <- rep(0, T) #statistic to monitor
+      z[1] <- avg.est
+      for(t in 2:T){
+        z[t] <- lambda*Statistics[t, j] + (1 - lambda)*z[t-1]
+      }
+      
+      
+      indx <- which(z > upper | z < lower)
+      control.df[indx, j] <- 1
+      
+      #Plot control chart if desired
+      statistic <- z
+      file <- paste(directory, "/", names.stats[j], ".pdf", sep = "")
+      ylim.lower <- min(lower, min(statistic)) - 0.015
+      ylim.upper <- max(upper, max(statistic)) + 0.015
+      plot(y = statistic, x = x, xlab = xlab, ylab = "Value", main = names.stats[j], type = "l", col = "black", ylim = c(ylim.lower, ylim.upper), lwd = 2, 
+           pch = 15, cex = 1.25, cex.lab = 1.25, cex.axis = 1.22, xaxt = "n")
+      points(y = statistic[indx], x = indx, col = "red", pch = 12, cex = 1.1)
+      abline(h = upper, lty = 2, lwd = 2, col = "red")
+      abline(h = lower, lty = 2, lwd = 2,col = "red")
+      axis(1, at = xaxis.old, labels = xaxis.new)
+      if(!is.null(points.of.interest)){
+        for(k in 1:length(points.of.interest)){
+          abline(v = points.of.interest[k], lwd = 2, lty = 2, col = "green")
+        }
+      }
+    }
+  }
+  
   return(Control.Chart = control.df)
 }
 
